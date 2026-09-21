@@ -99,6 +99,21 @@
     </div>
 
     <p class="project-note">These are personal builds demonstrating the systems I work with. Client case studies with real metrics coming soon — <a href="mailto:ameer.hamza090908@gmail.com">get in touch</a> if you'd like a live walkthrough.</p>
+
+    <!-- Lead capture form: drop this inside the #projects section, or anywhere on the page -->
+    <div class="lead-form-wrap">
+      <h3>Try the AI Lead Automation System</h3>
+      <p>Fill this out — it runs through the actual automation and you'll see the result.</p>
+
+      <form id="lead-form">
+        <input type="text" name="name" placeholder="Your name" required />
+        <input type="tel" name="phone" placeholder="Phone number" required />
+        <textarea name="message" placeholder="What do you need help with?" required></textarea>
+        <button type="submit" class="btn primary">Send</button>
+      </form>
+
+      <p id="lead-form-status"></p>
+    </div>
   </section>
 
   <section id="process" class="section">
@@ -183,5 +198,39 @@
   <footer>
     <p>© 2026 FlowPilot AI — AI Automation & CRM Systems</p>
   </footer>
+
+  <script>
+    const leadForm = document.getElementById('lead-form');
+    const statusEl = document.getElementById('lead-form-status');
+
+    leadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      statusEl.textContent = 'Sending...';
+
+      const formData = new FormData(leadForm);
+      const payload = {
+        name: formData.get('name'),
+        phone: formData.get('phone'),
+        message: formData.get('message')
+      };
+
+      try {
+        const response = await fetch('https://flowpilotai.app.n8n.cloud/webhook/FlowPilotAI', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          statusEl.textContent = "Sent! Check WhatsApp for the AI summary.";
+          leadForm.reset();
+        } else {
+          statusEl.textContent = "Something went wrong. Try again.";
+        }
+      } catch (err) {
+        statusEl.textContent = "Couldn't reach the automation. Try again.";
+      }
+    });
+  </script>
 </body>
 </html>
