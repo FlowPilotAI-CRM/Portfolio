@@ -64,12 +64,17 @@ document.addEventListener("DOMContentLoaded", () => {
     status.textContent = "Running the automation demo...";
     status.className = "lead-form-status";
 
+    const fieldValue = (name) => {
+      const field = form.elements.namedItem(name);
+      return field && typeof field.value === "string" ? field.value.trim() : "";
+    };
+
     const payload = {
-      name: (form.elements["name"] as HTMLInputElement)?.value?.trim() ?? "",
-      email: (form.elements["email"] as HTMLInputElement)?.value?.trim() ?? "",
-      company: (form.elements["company"] as HTMLInputElement)?.value?.trim() ?? "",
-      budget: (form.elements["budget"] as HTMLSelectElement)?.value?.trim() ?? "",
-      message: (form.elements["message"] as HTMLTextAreaElement)?.value?.trim() ?? "",
+      name: fieldValue("name"),
+      email: fieldValue("email"),
+      company: fieldValue("company"),
+      budget: fieldValue("budget"),
+      message: fieldValue("message"),
     };
 
     if (!payload.name || !payload.email || !payload.message) {
@@ -82,7 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const apiBase = window.location.origin.replace(/^https?:\/\//, "http://").replace(/\/?$/, ":4000");
+      const isLocal = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+      const apiBase = isLocal ? "http://localhost:4000" : "";
       const response = await fetch(`${apiBase}/api/lead/capture`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
